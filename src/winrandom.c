@@ -17,6 +17,10 @@ PyObject *exception = NULL;
 #include <stdio.h>
 #include <ctype.h>
 
+
+
+static PyObject *m;
+
 /* This function implements B.5.1.1 Simple Discard Method from NIST SP800-90
  * http://csrc.nist.gov/publications/nistpubs/800-90/SP800-90revised_March2007.pdf
  * Simple discard method is used to produce random LONG until it fits in 0..MAX range
@@ -146,7 +150,13 @@ static PyObject *winrandom_long(PyObject *self, PyObject *args)
 	return Py_BuildValue("k", pbRandomData);
 }
 
+static PyObject *winrandom_new(PyObject *self, PyObject *arg){
+	return m;
+}
+
 static PyMethodDef WinrandomMethods[] = {
+	{"new", winrandom_new, METH_VARARGS, "adapter for pycrypto usage..."},
+	{"get_bytes", winrandom_bytes, METH_VARARGS, "Get cryptographically strong random bytes."},
 	{"long", winrandom_long, METH_VARARGS, "Get cryptographically strong random long integer."},
 	{"bytes", winrandom_bytes, METH_VARARGS, "Get N cryptographically strong random bytes."},
 	{"range", winrandom_range, METH_VARARGS, "Get cryptographically strong random integer N that is 0 <= N < MAX."},
@@ -164,8 +174,6 @@ static struct PyModuleDef ModWinrandom =
 
 PyMODINIT_FUNC
 PyInit_winrandom(void) {
-	PyObject *m;
-
 	 m = PyModule_Create(&ModWinrandom);
 	 if (m == NULL)
 		return;
